@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MatchHistory extends Model
 {
     use HasFactory;
+    protected $table = 'match_history';
 
     public function league()
     {

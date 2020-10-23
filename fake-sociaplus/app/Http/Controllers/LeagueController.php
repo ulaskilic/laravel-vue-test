@@ -14,7 +14,7 @@ class LeagueController extends Controller
      */
     public function index()
     {
-        //
+        return response(League::all());
     }
 
     /**
@@ -25,7 +25,10 @@ class LeagueController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $league = new League();
+        $league->name = $request->get('name');
+        $league->save();
+        return response([], 201);
     }
 
     /**
@@ -36,7 +39,10 @@ class LeagueController extends Controller
      */
     public function show(League $league)
     {
-        //
+        $league->load('teams');
+        $league->load('scoreboard');
+        $league->load('fixture');
+        return response($league);
     }
 
     /**
@@ -48,7 +54,9 @@ class LeagueController extends Controller
      */
     public function update(Request $request, League $league)
     {
-        //
+        $league->name = $request->get('name');
+        $league->save();
+        return response($league, 204);
     }
 
     /**
@@ -59,6 +67,7 @@ class LeagueController extends Controller
      */
     public function destroy(League $league)
     {
-        //
+        $league->delete();
+        return response([], 204);
     }
 }

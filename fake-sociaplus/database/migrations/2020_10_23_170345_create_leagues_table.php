@@ -17,7 +17,7 @@ class CreateLeaguesTable extends Migration
             Schema::create('leagues', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
-                $table->integer('total_week');
+                $table->integer('total_week')->default(0);
                 $table->integer('current_week')->default(1);
                 $table->timestamps();
             });

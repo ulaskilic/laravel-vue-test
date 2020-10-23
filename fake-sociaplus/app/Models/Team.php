@@ -11,6 +11,23 @@ class Team extends Model
 
     public function league()
     {
-        $this->belongsTo('App\Models\League', 'id', 'league_id');
+        return $this->belongsTo('App\Models\League', 'league_id', 'id');
     }
+
+    public function homeHistory()
+    {
+        return $this->hasMany('App\Models\MatchHistory', 'home_team');
+    }
+
+    public function awayHistory()
+    {
+        return $this->hasMany('App\Models\MatchHistory', 'away_team');
+    }
+
+    public function allHistory()
+    {
+        return $this->homeHistory()->merge($this->awayHistory());
+    }
+
+
 }

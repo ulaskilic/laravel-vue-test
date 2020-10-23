@@ -18,5 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('teams', \App\Http\Controllers\TeamController::class);
 Route::apiResource('leagues', \App\Http\Controllers\LeagueController::class);
+Route::apiResource('leagues.teams', \App\Http\Controllers\TeamController::class);
+
+Route::get('debug', [\App\Http\Controllers\MatchController::class, 'index']);

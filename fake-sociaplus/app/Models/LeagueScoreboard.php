@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class LeagueScoreboard extends Model
 {
     use HasFactory;
+    protected $table = 'league_scoreboard';
 
     public function team()
     {
