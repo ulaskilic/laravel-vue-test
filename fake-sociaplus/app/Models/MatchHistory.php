@@ -17,11 +17,11 @@ class MatchHistory extends Model
 
     public function homeTeam()
     {
-        return $this->belongsTo('App\Models\Team', 'id', 'home_team');
+        return $this->belongsTo('App\Models\Team', 'home_team', 'id');
     }
 
     public function awayTeam()
     {
-        return $this->belongsTo('App\Models\Team', 'id', 'away_team');
+        return $this->belongsTo('App\Models\Team', 'away_team', 'id');
     }
 }
