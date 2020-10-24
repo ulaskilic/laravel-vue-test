@@ -14,6 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        /**
+         * Inject service to container
+         * TODO: create new service provider for registering additional services
+         */
         $this->app->singleton(MatchService::class, function($app) {
             return new MatchService();
         });

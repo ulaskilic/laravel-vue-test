@@ -8,12 +8,27 @@ use App\Models\League;
 use App\Models\LeagueScoreboard;
 use App\Models\MatchHistory;
 use App\Models\Team;
+use App\Utils\Math;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * Class MatchService
+ *
+ * BIG TODO: Refactor code! its so dirty...
+ *
+ * @package App\Services
+ */
 class MatchService
 {
 
+    /**
+     * Prepare fixture
+     *
+     * @param League $league
+     *
+     * @return \Illuminate\Database\Eloquent\Builder[]|Collection
+     */
     public function prepareFixture(League $league)
     {
         $teams = $league->teams()->get();
@@ -34,8 +49,14 @@ class MatchService
             }
         }
 
+        /**
+         * Clean all history for making sure
+         */
         MatchHistory::where('league_id', $league->id)->delete();
-        // distribute games to weeks and save
+
+        /**
+         * Distribute games to weeks and save as match history
+         */
         $processedGames = [];
         foreach (range(1, $totalWeeks) as $currWeek) {
             $blackList = [];
@@ -60,10 +81,16 @@ class MatchService
             }
         }
 
+        /**
+         * Update league
+         */
         $league->total_week = $totalWeeks;
         $league->current_week = 0;
         $league->save();
 
+        /**
+         * Rebuild Scoreboard
+         */
         LeagueScoreboard::where('league_id', $league->id)->delete();
         foreach ($teams as $team) {
             $score = new LeagueScoreboard();
@@ -72,9 +99,17 @@ class MatchService
             $score->save();
         }
 
+        /**
+         * Provide all history
+         */
         return MatchHistory::with('homeTeam')->with('awayTeam')->get();
     }
 
+    /**
+     * Simulate one week
+     *
+     * @param League $league
+     */
     public function simulateOneWeek(League $league)
     {
         $currentWeek = $league->current_week;
@@ -95,6 +130,11 @@ class MatchService
         $league->save();
     }
 
+    /**
+     * Simulate single match
+     *
+     * @param MatchHistory $matchHistory
+     */
     private function playMatch(MatchHistory $matchHistory)
     {
 //        $matchHistory->events()->create(['type' => 'msg', 'event' => 'Maç başlıyor', 'minute' => 0]);
@@ -205,6 +245,11 @@ class MatchService
 
     }
 
+    /**
+     * Simulate all weeks
+     *
+     * @param League $league
+     */
     public function simulateAll(League $league): void
     {
         $currentWeek = $league->current_week;
@@ -215,11 +260,62 @@ class MatchService
         }
     }
 
+    /**
+     * Possible approachs
+     * 1) Nontransitive dice
+     * 2) Elo rating
+     * 3) Rating percentage index RPI
+     * 4) Or customized way, why not?
+     *
+     * @param League $league
+     *
+     * @return array
+     */
     public function predictFavoriteTeam(League $league)
     {
+        $scoreBoard = $league->scoreboard()->orderByDesc('points')->get();
+        $remainingWeeks = $league->total_week - $league->current_week;
+        $playedWeeks = $league->current_week;
 
+        $leaders = [];
+        /**
+         * Calculate possible 1st 2nd 3th 4th
+         *
+         * @var LeagueScoreboard $score
+         */
+        foreach ($scoreBoard as $index => $score) {
+            $leaders[$index] = [
+                'team' => $score->toArray(),
+                'maxPossiblePoint' => $score->points + ($remainingWeeks * 3),
+                'minPossiblePoint' => $score->points,
+                'winRatio' => $score->won / $playedWeeks * 100
+            ];
+        }
+
+        $scoresCollection = collect($leaders);
+        $minP = $scoresCollection->min('minPossiblePoint');
+        $maxP = $scoresCollection->max('maxPossiblePoint');
+
+        $scoresCollection = $scoresCollection->map(function ($item) use($minP, $maxP) {
+            if($item['maxPossiblePoint'] < $minP) {
+                $item['rate'] = 0;
+            } else {
+                $item['rate'] = $item['winRatio'] * $item['score'];
+            }
+            return $item;
+        });
+
+        return $scoresCollection->toArray();
     }
 
+    /**
+     * Generate fake event
+     *
+     * @param $t1
+     * @param $t2
+     *
+     * @return array
+     */
     private function generateFakeEvent($t1, $t2): array
     {
         $possibilities = [
@@ -238,6 +334,14 @@ class MatchService
         return ['type' => 'msg', 'msg' => $this->getRandomEventMsg($t1, $t2)];
     }
 
+    /**
+     * Get random event as msg type
+     *
+     * @param $t1
+     * @param $t2
+     *
+     * @return array|int|string|string[]
+     */
     private function getRandomEventMsg($t1, $t2)
     {
         $msg = [
@@ -255,6 +359,9 @@ class MatchService
         return str_replace(['@t1', '@t2'], [$t1, $t2], array_rand($msg, 1));
     }
 
+    /**
+     * TODO there is no time to implement this
+     */
     private function generateFakeMetric()
     {
 

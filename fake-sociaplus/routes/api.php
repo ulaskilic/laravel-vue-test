@@ -25,3 +25,5 @@ Route::post('leagues/{league}/distribute-fixture', [\App\Http\Controllers\MatchC
 Route::post('leagues/{league}/play-one-week', [\App\Http\Controllers\MatchController::class, 'simulateOneWeek']);
 Route::post('leagues/{league}/play-all', [\App\Http\Controllers\MatchController::class, 'simulateAll']);
 Route::get('debug', [\App\Http\Controllers\MatchController::class, 'debug']);
+
+Route::get('leagues/{league}/predict-leaders', [\App\Http\Controllers\MatchController::class, 'predictDebug']);
