@@ -43,6 +43,10 @@ export default {
         },
         playAll: async (leagueId) => {
             return api.post(`leagues/${leagueId}/play-all`, {})
-        }
+        },
+        predict: async (leagueId) => {
+            return api.post(`leagues/${leagueId}/predict-leaders`, {})
+        },
+
     }
 }

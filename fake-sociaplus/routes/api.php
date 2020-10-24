@@ -24,6 +24,8 @@ Route::apiResource('leagues.teams', \App\Http\Controllers\TeamController::class)
 Route::post('leagues/{league}/distribute-fixture', [\App\Http\Controllers\MatchController::class, 'distributeFixture']);
 Route::post('leagues/{league}/play-one-week', [\App\Http\Controllers\MatchController::class, 'simulateOneWeek']);
 Route::post('leagues/{league}/play-all', [\App\Http\Controllers\MatchController::class, 'simulateAll']);
+Route::post('leagues/{league}/predict-leaders', [\App\Http\Controllers\MatchController::class, 'predict']);
+
+
 Route::get('debug', [\App\Http\Controllers\MatchController::class, 'debug']);
 
-Route::get('leagues/{league}/predict-leaders', [\App\Http\Controllers\MatchController::class, 'predictDebug']);

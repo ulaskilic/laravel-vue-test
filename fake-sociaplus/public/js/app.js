@@ -2052,6 +2052,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2108,7 +2125,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           text: 'P',
           value: 'points'
         }]
-      }
+      },
+      predict: []
     };
   },
   computed: {
@@ -2127,7 +2145,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var _yield$_this$$api$lea, data;
+        var _yield$_this$$api$lea, data, predict;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
@@ -2146,9 +2164,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 data = _yield$_this$$api$lea.data;
                 _this.fixture = data.fixture;
                 _this.scoreBoard.data = data.scoreboard;
+                _context.next = 11;
+                return _this.$api.match.predict(_this.leagueId);
+
+              case 11:
+                predict = _context.sent;
+                _this.predict = predict.data;
                 _this.table.loading = false;
 
-              case 10:
+              case 14:
               case "end":
                 return _context.stop();
             }
@@ -23816,72 +23840,132 @@ var render = function() {
       _c(
         "div",
         [
-          _c("v-toolbar-title", [_vm._v("Fikstür")]),
-          _vm._v(" "),
-          _c("v-spacer"),
-          _vm._v(" "),
-          _vm._l(_vm._.groupBy(_vm.fixture, "week"), function(item, week) {
-            return _c(
-              "div",
-              { key: week, attrs: { dense: "" } },
-              [
-                _c("span", [_vm._v(_vm._s(week) + ".Hafta")]),
-                _vm._v(" "),
-                _c(
-                  "v-row",
-                  { attrs: { dense: "" } },
-                  _vm._l(item, function(match) {
+          _c(
+            "v-row",
+            [
+              _c(
+                "v-col",
+                { attrs: { cols: 6 } },
+                [
+                  _c("v-toolbar-title", [_vm._v("Fikstür")]),
+                  _vm._v(" "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _vm._l(_vm._.groupBy(_vm.fixture, "week"), function(
+                    item,
+                    week
+                  ) {
                     return _c(
-                      "v-col",
-                      { key: match.id, attrs: { cols: 3 } },
+                      "div",
+                      { key: week, attrs: { dense: "" } },
                       [
+                        _c("span", [_vm._v(_vm._s(week) + ".Hafta")]),
+                        _vm._v(" "),
                         _c(
-                          "v-card",
-                          [
-                            _c("v-card-text", [
-                              _c("b", [
-                                _vm._v(
-                                  _vm._s(match.home_team.name) +
-                                    " vs " +
-                                    _vm._s(match.away_team.name)
-                                )
-                              ]),
-                              _vm._v(" "),
-                              match.is_played == 0
-                                ? _c("div", [
-                                    _vm._v(
-                                      "\n                                Maç henüz başlamadı...\n                            "
-                                    )
-                                  ])
-                                : _c("div", [
-                                    _c("span", [
-                                      _vm._v(
-                                        _vm._s(match.home_team_score) +
-                                          " - " +
-                                          _vm._s(match.away_team_score)
-                                      )
+                          "v-row",
+                          { attrs: { dense: "" } },
+                          _vm._l(item, function(match) {
+                            return _c(
+                              "v-col",
+                              { key: match.id, attrs: { cols: 6 } },
+                              [
+                                _c(
+                                  "v-card",
+                                  [
+                                    _c("v-card-text", [
+                                      _c("b", [
+                                        _vm._v(
+                                          _vm._s(match.home_team.name) +
+                                            " vs " +
+                                            _vm._s(match.away_team.name)
+                                        )
+                                      ]),
+                                      _vm._v(" "),
+                                      match.is_played == 0
+                                        ? _c("div", [
+                                            _vm._v(
+                                              "\n                                        Maç henüz başlamadı...\n                                    "
+                                            )
+                                          ])
+                                        : _c("div", [
+                                            _c("span", [
+                                              _vm._v(
+                                                _vm._s(match.home_team_score) +
+                                                  " - " +
+                                                  _vm._s(match.away_team_score)
+                                              )
+                                            ])
+                                          ]),
+                                      _vm._v(" "),
+                                      _c("div", [
+                                        _c("span", [
+                                          _vm._v("Hakem: Cüneyt Çakır")
+                                        ])
+                                      ])
                                     ])
-                                  ]),
-                              _vm._v(" "),
-                              _c("div", [
-                                _c("span", [_vm._v("Hakem: Cüneyt Çakır")])
-                              ])
-                            ])
-                          ],
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          }),
                           1
                         )
                       ],
                       1
                     )
-                  }),
-                  1
-                )
-              ],
-              1
-            )
-          })
+                  })
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c(
+                "v-col",
+                { attrs: { cols: 6 } },
+                [
+                  _c("v-toolbar-title", [_vm._v("Tahminler")]),
+                  _vm._v(" "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-row",
+                    { attrs: { dense: "" } },
+                    _vm._l(_vm.predict, function(data) {
+                      return _c(
+                        "v-col",
+                        { key: data.team.team.id, attrs: { cols: 12 } },
+                        [
+                          _c(
+                            "v-card",
+                            [
+                              _c("v-card-text", [
+                                _c("b", [
+                                  _vm._v(
+                                    _vm._s(data.team.team.name) +
+                                      " -> " +
+                                      _vm._s(data.rate) +
+                                      "%"
+                                  )
+                                ])
+                              ])
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    }),
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
         ],
-        2
+        1
       ),
       _vm._v(" "),
       _c(
@@ -86161,6 +86245,28 @@ var api = apisauce__WEBPACK_IMPORTED_MODULE_1___default.a.create({
       }
 
       return playAll;
+    }(),
+    predict: function () {
+      var _predict = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee13(leagueId) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee13$(_context13) {
+          while (1) {
+            switch (_context13.prev = _context13.next) {
+              case 0:
+                return _context13.abrupt("return", api.post("leagues/".concat(leagueId, "/predict-leaders"), {}));
+
+              case 1:
+              case "end":
+                return _context13.stop();
+            }
+          }
+        }, _callee13);
+      }));
+
+      function predict(_x17) {
+        return _predict.apply(this, arguments);
+      }
+
+      return predict;
     }()
   }
 });

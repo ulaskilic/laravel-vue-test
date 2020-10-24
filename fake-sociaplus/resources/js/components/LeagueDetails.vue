@@ -63,29 +63,46 @@
         </v-data-table>
         <v-spacer/>
         <div>
-            <v-toolbar-title>Fikstür</v-toolbar-title>
-            <v-spacer/>
-            <div dense v-for="(item, week) in _.groupBy(fixture, 'week')" :key="week">
-                <span>{{ week }}.Hafta</span>
-                <v-row dense>
-                    <v-col :cols="3" v-for="match in item" :key="match.id">
-                        <v-card>
-                            <v-card-text>
-                                <b>{{ match.home_team.name }} vs {{ match.away_team.name }}</b>
-                                <div v-if="match.is_played == 0">
-                                    Maç henüz başlamadı...
-                                </div>
-                                <div v-else>
-                                    <span>{{match.home_team_score}} - {{match.away_team_score}}</span>
-                                </div>
-                                <div>
-                                    <span>Hakem: Cüneyt Çakır</span>
-                                </div>
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
-                </v-row>
-            </div>
+            <v-row>
+                <v-col :cols="6">
+                    <v-toolbar-title>Fikstür</v-toolbar-title>
+                    <v-spacer/>
+                    <div dense v-for="(item, week) in _.groupBy(fixture, 'week')" :key="week">
+                        <span>{{ week }}.Hafta</span>
+                        <v-row dense>
+                            <v-col :cols="6" v-for="match in item" :key="match.id">
+                                <v-card>
+                                    <v-card-text>
+                                        <b>{{ match.home_team.name }} vs {{ match.away_team.name }}</b>
+                                        <div v-if="match.is_played == 0">
+                                            Maç henüz başlamadı...
+                                        </div>
+                                        <div v-else>
+                                            <span>{{ match.home_team_score }} - {{ match.away_team_score }}</span>
+                                        </div>
+                                        <div>
+                                            <span>Hakem: Cüneyt Çakır</span>
+                                        </div>
+                                    </v-card-text>
+                                </v-card>
+                            </v-col>
+                        </v-row>
+                    </div>
+                </v-col>
+                <v-col :cols="6">
+                    <v-toolbar-title>Tahminler</v-toolbar-title>
+                    <v-spacer/>
+                    <v-row dense>
+                        <v-col :cols="12" v-for="data in predict" :key="data.team.team.id">
+                            <v-card>
+                                <v-card-text>
+                                    <b>{{data.team.team.name}} -> {{data.rate}}%</b>
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </v-col>
+            </v-row>
         </div>
 
         <div>
@@ -143,6 +160,7 @@ export default {
                     {text: 'P', value: 'points'},
                 ]
             },
+            predict: [],
         }
     },
     computed: {
@@ -163,6 +181,10 @@ export default {
             const {data} = await this.$api.league.get(this.leagueId);
             this.fixture = data.fixture;
             this.scoreBoard.data = data.scoreboard;
+
+            const predict = await this.$api.match.predict(this.leagueId);
+            this.predict = predict.data;
+
             this.table.loading = false;
         },
         async save() {

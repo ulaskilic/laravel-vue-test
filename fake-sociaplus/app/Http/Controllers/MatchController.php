@@ -69,7 +69,7 @@ class MatchController extends Controller
      * @param League       $league
      * @param MatchService $service
      */
-    public function predictDebug(League $league, MatchService $service)
+    public function predict(League $league, MatchService $service)
     {
         return $service->predictFavoriteTeam($league);
     }

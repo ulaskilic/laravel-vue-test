@@ -273,7 +273,7 @@ class MatchService
      */
     public function predictFavoriteTeam(League $league)
     {
-        $scoreBoard = $league->scoreboard()->orderByDesc('points')->get();
+        $scoreBoard = $league->scoreboard()->orderByDesc('points')->with('team')->get();
         $remainingWeeks = $league->total_week - $league->current_week;
         $playedWeeks = $league->current_week;
 
@@ -287,8 +287,7 @@ class MatchService
             $leaders[$index] = [
                 'team' => $score->toArray(),
                 'maxPossiblePoint' => $score->points + ($remainingWeeks * 3),
-                'minPossiblePoint' => $score->points,
-                'winRatio' => $score->won / $playedWeeks * 100
+                'minPossiblePoint' => $score->points
             ];
         }
 
@@ -300,12 +299,26 @@ class MatchService
             if($item['maxPossiblePoint'] < $minP) {
                 $item['rate'] = 0;
             } else {
-                $item['rate'] = $item['winRatio'] * $item['score'];
+                /**
+                 * Experimental things
+                 */
+                $goalDiffEffect = $item['team']['goal_diff'] > 0 ? $item['team']['goal_diff'] * 1.25 / $item['team']['goal_diff'] : 1;
+                $goalEffect = $item['team']['for'] > 0 ? $item['team']['for'] * 1.10 / $item['team']['for'] : 1;
+                $item['rate'] = ($item['maxPossiblePoint'] - $minP);
             }
             return $item;
         });
 
-        return $scoresCollection->toArray();
+        $totalRate = $scoresCollection->sum('rate');
+        $scoresCollection = $scoresCollection->map(function ($item) use($totalRate) {
+            if($item['rate'] != 0) {
+                $item['rate'] = number_format($item['rate'] / $totalRate * 100, 2);
+            }
+            return $item;
+        });
+
+
+        return $scoresCollection->sortByDesc('rate')->toArray();
     }
 
     /**
