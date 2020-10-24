@@ -20,7 +20,8 @@ class LeagueController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -34,22 +35,22 @@ class LeagueController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\League  $league
+     * @param \App\Models\League $league
+     *
      * @return \Illuminate\Http\Response
      */
     public function show(League $league)
     {
-        $league->load('teams');
-        $league->load('scoreboard');
-        $league->load('fixture');
+        $league->load(['teams', 'scoreboard', 'scoreboard.team', 'fixture', 'fixture.homeTeam', 'fixture.awayTeam']);
         return response($league);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\League  $league
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\League       $league
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, League $league)
@@ -62,7 +63,8 @@ class LeagueController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\League  $league
+     * @param \App\Models\League $league
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy(League $league)

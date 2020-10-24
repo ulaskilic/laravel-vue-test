@@ -17,6 +17,9 @@ class CreateMatchEventsTable extends Migration
             $table->id();
             $table->integer('match_id');
             $table->text('event');
+            $table->string('type');
+            $table->string('team_id')->nullable();
+            $table->integer('minute');
             $table->timestamps();
         });
     }

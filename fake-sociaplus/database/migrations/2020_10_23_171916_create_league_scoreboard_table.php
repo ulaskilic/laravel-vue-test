@@ -17,13 +17,13 @@ class CreateLeagueScoreboardTable extends Migration
             $table->id();
             $table->integer('league_id');
             $table->integer('team_id');
-            $table->integer('won');
-            $table->integer('drawn');
-            $table->integer('lost');
-            $table->integer('for');
-            $table->integer('against');
-            $table->integer('goal_diff');
-            $table->integer('points');
+            $table->integer('won')->default(0);
+            $table->integer('drawn')->default(0);
+            $table->integer('lost')->default(0);
+            $table->integer('for')->default(0);
+            $table->integer('against')->default(0);
+            $table->integer('goal_diff')->default(0);
+            $table->integer('points')->default(0);
             $table->timestamps();
         });
     }

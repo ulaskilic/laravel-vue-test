@@ -29,5 +29,10 @@ class Team extends Model
         return $this->homeHistory()->merge($this->awayHistory());
     }
 
+    public function scoreBoard()
+    {
+        return $this->hasOne('App\Models\LeagueScoreboard', 'team_id');
+    }
+
 
 }

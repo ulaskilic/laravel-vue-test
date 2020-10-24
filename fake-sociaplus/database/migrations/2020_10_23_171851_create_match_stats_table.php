@@ -16,11 +16,14 @@ class CreateMatchStatsTable extends Migration
         Schema::create('match_stats', function (Blueprint $table) {
             $table->id();
             $table->integer('match_id');
-            $table->integer('red_card');
-            $table->integer('yellow_card');
-            $table->integer('foul');
-            $table->integer('home_team_average_play');
-            $table->integer('away_team_average_play');
+            $table->integer('home_red_card');
+            $table->integer('away_red_card');
+            $table->integer('home_yellow_card');
+            $table->integer('away_yellow_card');
+            $table->integer('home_foul');
+            $table->integer('away_foul');
+            $table->integer('home_average_play');
+            $table->integer('away_average_play');
             $table->timestamps();
         });
     }

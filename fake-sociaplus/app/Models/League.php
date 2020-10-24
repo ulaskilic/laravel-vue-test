@@ -17,7 +17,7 @@ class League extends Model
 
     public function scoreboard()
     {
-        return $this->hasOne('App\Models\LeagueScoreboard', 'league_id');
+        return $this->hasMany('App\Models\LeagueScoreboard', 'league_id');
     }
 
     public function fixture()

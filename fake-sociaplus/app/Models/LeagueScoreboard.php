@@ -12,11 +12,11 @@ class LeagueScoreboard extends Model
 
     public function team()
     {
-        $this->hasOne('App\Models\Team', 'team_id', 'id');
+        return $this->belongsTo('App\Models\Team', 'team_id');
     }
 
     public function league()
     {
-        $this->belongsTo('App\Models\League', 'id', 'league_id');
+        return $this->belongsTo('App\Models\League', 'id', 'league_id');
     }
 }

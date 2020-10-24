@@ -2,8 +2,9 @@
     <div>
         <v-row>
             <v-col>
-                <v-btn color="primary">Tüm ligi oynat</v-btn>
-                <v-btn color="primary">Sonraki Haftayı Oynat</v-btn>
+                <v-btn color="primary" @click="distributeFixture">Fixtürü Hazırla</v-btn>
+                <v-btn color="primary" @click="playAll">Tüm ligi oynat</v-btn>
+                <v-btn color="primary" @click="playOneWeek">Sonraki Haftayı Oynat</v-btn>
                 <v-btn color="danger">Ligi Sıfırla</v-btn>
             </v-col>
         </v-row>
@@ -42,7 +43,7 @@
             </template>
 
             <template v-slot:item.name="{item}">
-                <router-link :to="`/leagues/${item.id}/teams`">{{item.name}}</router-link>
+                <router-link :to="`/leagues/${item.id}/teams`">{{ item.name }}</router-link>
             </template>
             <template v-slot:item.actions="{item}">
                 <v-icon
@@ -60,10 +61,55 @@
                 </v-icon>
             </template>
         </v-data-table>
+        <v-spacer/>
+        <div>
+            <v-toolbar-title>Fikstür</v-toolbar-title>
+            <v-spacer/>
+            <div dense v-for="(item, week) in _.groupBy(fixture, 'week')" :key="week">
+                <span>{{ week }}.Hafta</span>
+                <v-row dense>
+                    <v-col :cols="3" v-for="match in item" :key="match.id">
+                        <v-card>
+                            <v-card-text>
+                                <b>{{ match.home_team.name }} vs {{ match.away_team.name }}</b>
+                                <div v-if="match.is_played == 0">
+                                    Maç henüz başlamadı...
+                                </div>
+                                <div v-else>
+                                    <span>{{match.home_team_score}} - {{match.away_team_score}}</span>
+                                </div>
+                                <div>
+                                    <span>Hakem: Cüneyt Çakır</span>
+                                </div>
+                            </v-card-text>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </div>
+        </div>
+
+        <div>
+            <v-data-table :headers="scoreBoard.headers" :loading="table.loading" :items="scoreBoard.data"
+                          :sort-by="['points', 'goal_diff']"
+                          :sort-desc="[true, true]"
+            >
+                <template v-slot:top>
+                    <v-toolbar-title>Puan Durumu</v-toolbar-title>
+                </template>
+            </v-data-table>
+        </div>
+        <v-overlay :value="table.loading">
+            <v-progress-circular
+                indeterminate
+                size="64"
+            ></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 
 <script>
+import * as _ from 'lodash';
+
 export default {
     data() {
         return {
@@ -82,20 +128,47 @@ export default {
                     {text: 'Aksiyonlar', value: 'actions', sortable: false},
                 ],
                 data: []
-            }
+            },
+            fixture: [],
+            scoreBoard: {
+                data: [],
+                headers: [
+                    {text: 'Takım İsmi', value: 'team.name'},
+                    {text: 'G', value: 'won'},
+                    {text: 'B', value: 'drawn'},
+                    {text: 'M', value: 'lost'},
+                    {text: 'A', value: 'for'},
+                    {text: 'Y', value: 'against'},
+                    {text: 'AV', value: 'goal_diff'},
+                    {text: 'P', value: 'points'},
+                ]
+            },
         }
     },
     computed: {
-      leagueId() {
-          return this.$route.params.league_id
-      }
+        leagueId() {
+            return this.$route.params.league_id
+        },
+        _() {
+            return _;
+        }
     },
     mounted() {
-        this.refresh()
+        this.init()
     },
     methods: {
+        async init() {
+            await this.refresh();
+            this.table.loading = true;
+            const {data} = await this.$api.league.get(this.leagueId);
+            this.fixture = data.fixture;
+            this.scoreBoard.data = data.scoreboard;
+            this.table.loading = false;
+        },
         async save() {
-            if(this.dialog.data.id) {
+            this.dialog.show = false;
+            this.table.loading = true;
+            if (this.dialog.data.id) {
                 await this.$api.team.update(this.leagueId, this.dialog.data.id, {name: this.dialog.data.name});
             } else {
                 await this.$api.team.create(this.leagueId, {name: this.dialog.data.name})
@@ -110,7 +183,7 @@ export default {
         },
         async deleteItem(id) {
             this.table.loading = true;
-            await this.$api.league.delete(id);
+            await this.$api.team.delete(this.leagueId, id);
             await this.refresh();
         },
         async close() {
@@ -122,6 +195,21 @@ export default {
             const {data} = await this.$api.team.list(this.leagueId);
             this.table.data = data;
             this.table.loading = false;
+        },
+        async distributeFixture() {
+            this.table.loading = true;
+            await this.$api.match.distributeFixture(this.leagueId);
+            await this.init();
+        },
+        async playOneWeek() {
+            this.table.loading = true;
+            await this.$api.match.playOneWeek(this.leagueId);
+            await this.init();
+        },
+        async playAll() {
+            this.table.loading = true;
+            await this.$api.match.playAll(this.leagueId);
+            await this.init();
         }
     }
 }

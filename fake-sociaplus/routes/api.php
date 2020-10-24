@@ -21,4 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::apiResource('leagues', \App\Http\Controllers\LeagueController::class);
 Route::apiResource('leagues.teams', \App\Http\Controllers\TeamController::class);
 
-Route::get('debug', [\App\Http\Controllers\MatchController::class, 'index']);
+Route::post('leagues/{league}/distribute-fixture', [\App\Http\Controllers\MatchController::class, 'distributeFixture']);
+Route::post('leagues/{league}/play-one-week', [\App\Http\Controllers\MatchController::class, 'simulateOneWeek']);
+Route::post('leagues/{league}/play-all', [\App\Http\Controllers\MatchController::class, 'simulateAll']);
+Route::get('debug', [\App\Http\Controllers\MatchController::class, 'debug']);

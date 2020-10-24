@@ -33,5 +33,16 @@ export default {
         delete: async (leagueId, id) => {
             return api.delete(`leagues/${leagueId}/teams/${id}`)
         },
+    },
+    match: {
+        distributeFixture: async (leagueId) => {
+            return api.post(`leagues/${leagueId}/distribute-fixture`, {})
+        },
+        playOneWeek: async (leagueId) => {
+            return api.post(`leagues/${leagueId}/play-one-week`, {})
+        },
+        playAll: async (leagueId) => {
+            return api.post(`leagues/${leagueId}/play-all`, {})
+        }
     }
 }

@@ -24,4 +24,9 @@ class MatchHistory extends Model
     {
         return $this->belongsTo('App\Models\Team', 'away_team', 'id');
     }
+
+    public function events()
+    {
+        return $this->hasMany('App\Models\MatchEvent', 'match_id');
+    }
 }

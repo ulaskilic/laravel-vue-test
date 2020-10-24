@@ -73,7 +73,7 @@ class TeamController extends Controller
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(Team $team)
+    public function destroy(League $league, Team $team)
     {
         $team->delete();
         return response($team, 204);

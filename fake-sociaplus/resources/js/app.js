@@ -3,8 +3,11 @@ import VueRouter from "vue-router";
 import Vuetify from "vuetify";
 import routes from './routes';
 import api from './utils/api';
+import MarqueeText from 'vue-marquee-text-component'
+
 // Define root component
 Vue.component('root', require('./components/Root.vue').default);
+Vue.component('marquee-text', MarqueeText);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
